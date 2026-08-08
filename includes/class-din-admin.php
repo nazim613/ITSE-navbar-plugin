@@ -102,6 +102,7 @@ class DIN_Admin {
 			'din_offer_link'        => '',
 			'din_show_globe'        => 1,
 			'din_show_cart'         => 1,
+			'din_cart_shortcode'    => '[fk_cart_menu]',
 			'din_cart_url'          => '',
 			'din_show_account'      => 1,
 			'din_account_url'       => '',
@@ -287,6 +288,13 @@ class DIN_Admin {
 									<span class="din-slider"></span>
 								</label>
 								<p class="description">Displays FunnelKit / WooCommerce cart icon with count badge. In mobile view, cart icon is placed to the left of the menu icon on the right.</p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">FunnelKit / Cart Shortcode</th>
+							<td>
+								<input type="text" name="din_cart_shortcode" value="<?php echo esc_attr( get_option( 'din_cart_shortcode', '[fk_cart_menu]' ) ); ?>" class="large-text" placeholder="[fk_cart_menu]" />
+								<p class="description">Default: <code>[fk_cart_menu]</code> (FunnelKit Cart Shortcode). Automatically renders FunnelKit native cart icon & slide drawer trigger.</p>
 							</td>
 						</tr>
 						<tr>

@@ -219,6 +219,19 @@
 }
 
 /* Cart Badge */
+.din-custom-cart-wrap {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+}
+
+.din-custom-cart-wrap img,
+.din-custom-cart-wrap svg {
+	max-height: 28px;
+	width: auto;
+}
+
 .din-cart-badge {
 	position: absolute;
 	top: 2px;

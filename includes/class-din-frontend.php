@@ -306,6 +306,17 @@ class DIN_Frontend {
 	}
 
 	private function render_cart_icon() {
+		$custom_shortcode = get_option( 'din_cart_shortcode', '[fk_cart_menu]' );
+
+		if ( ! empty( $custom_shortcode ) ) {
+			$shortcode_output = do_shortcode( $custom_shortcode );
+			if ( ! empty( trim( $shortcode_output ) ) && $shortcode_output !== $custom_shortcode ) {
+				echo '<div class="din-custom-cart-wrap">' . $shortcode_output . '</div>';
+				return;
+			}
+		}
+
+		// Fallback built-in WooCommerce cart icon
 		$count    = 0;
 		$cart_url = get_option( 'din_cart_url', '' );
 
