@@ -198,6 +198,8 @@ class DIN_Frontend {
 		self::$rendered = true;
 
 		$sticky_class = get_option( 'din_sticky', 1 ) ? 'din-sticky' : '';
+		$header_style = get_option( 'din_header_style', 'dynamic_island' );
+		$style_class  = ( 'normal' === $header_style ) ? 'din-style-normal' : 'din-style-dynamic';
 		$offer_enable = get_option( 'din_offer_enable', 1 );
 		$offer_text   = get_option( 'din_offer_text', '✨ BUY 3 TO SAVE 20% ✨' );
 		$offer_link   = get_option( 'din_offer_link', '' );
@@ -209,7 +211,7 @@ class DIN_Frontend {
 		}
 		?>
 
-		<div class="din-header-wrap <?php echo esc_attr( $sticky_class ); ?>">
+		<div class="din-header-wrap <?php echo esc_attr( $sticky_class ); ?> <?php echo esc_attr( $style_class ); ?>">
 			<?php if ( $offer_enable && ! empty( $offer_text ) ) : ?>
 				<div class="din-offer-bar">
 					<?php if ( ! empty( $offer_link ) ) : ?>

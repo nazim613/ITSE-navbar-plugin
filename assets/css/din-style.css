@@ -105,18 +105,34 @@ body.admin-bar .din-header-wrap.din-sticky {
 	overflow: visible !important;
 }
 
-/* MORPH TO FLOATING DYNAMIC ISLAND PILL ON SCROLL */
-.din-header-wrap.din-scrolled .din-container {
+/* MORPH TO FLOATING DYNAMIC ISLAND PILL ON SCROLL (Only when Dynamic Island Mode is selected) */
+.din-header-wrap.din-style-dynamic.din-scrolled .din-container {
 	max-width: 1240px;
 	margin: 8px auto;
 	padding: 0 16px;
 }
 
-.din-header-wrap.din-scrolled .din-island-nav {
+.din-header-wrap.din-style-dynamic.din-scrolled .din-island-nav {
 	border-radius: var(--din-island-radius, 50px) !important;
 	box-shadow: var(--din-shadow) !important;
 	border: var(--din-island-border, 1px solid rgba(0, 0, 0, 0.08)) !important;
 	padding: 8px 24px;
+}
+
+/* NORMAL FULL-WIDTH STANDARD HEADER MODE */
+.din-header-wrap.din-style-normal .din-container {
+	max-width: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.din-header-wrap.din-style-normal .din-island-nav {
+	border-radius: 0px !important;
+	box-shadow: none !important;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+	max-width: 100% !important;
+	width: 100% !important;
+	padding: 10px 32px !important;
 }
 
 .din-island-nav:hover {

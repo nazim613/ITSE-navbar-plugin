@@ -91,6 +91,7 @@ class DIN_Admin {
 		$options = array(
 			'din_enable',
 			'din_hide_theme_header',
+			'din_header_style',
 			'din_desktop_menu',
 			'din_mobile_menu',
 			'din_nav_menu',
@@ -126,6 +127,7 @@ class DIN_Admin {
 
 			update_option( 'din_enable', isset( $_POST['din_enable'] ) ? 1 : 0 );
 			update_option( 'din_hide_theme_header', isset( $_POST['din_hide_theme_header'] ) ? 1 : 0 );
+			update_option( 'din_header_style', isset( $_POST['din_header_style'] ) ? sanitize_text_field( $_POST['din_header_style'] ) : 'dynamic_island' );
 			update_option( 'din_desktop_menu', isset( $_POST['din_desktop_menu'] ) ? intval( $_POST['din_desktop_menu'] ) : 0 );
 			update_option( 'din_mobile_menu', isset( $_POST['din_mobile_menu'] ) ? intval( $_POST['din_mobile_menu'] ) : 0 );
 			update_option( 'din_logo_url', isset( $_POST['din_logo_url'] ) ? esc_url_raw( $_POST['din_logo_url'] ) : '' );
@@ -179,6 +181,16 @@ class DIN_Admin {
 									<span class="din-slider"></span>
 								</label>
 								<p class="description">Turn on/off the Dynamic Island header across your site.</p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">Header Layout Style</th>
+							<td>
+								<select name="din_header_style" class="regular-text">
+									<option value="dynamic_island" <?php selected( get_option( 'din_header_style', 'dynamic_island' ), 'dynamic_island' ); ?>>Dynamic Island Floating Pill (Morphs on Scroll)</option>
+									<option value="normal" <?php selected( get_option( 'din_header_style', 'dynamic_island' ), 'normal' ); ?>>Normal Full-Width Standard Header</option>
+								</select>
+								<p class="description">Choose between modern Dynamic Island floating pill on scroll or classic Normal full-width header.</p>
 							</td>
 						</tr>
 						<tr>
