@@ -3,6 +3,49 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+class DIN_Desktop_Nav_Walker extends Walker_Nav_Menu {
+	public function start_el( &$output, $item, $depth = 0, $args = null, $id = 0 ) {
+		$classes      = empty( $item->classes ) ? array() : (array) $item->classes;
+		$has_children = in_array( 'menu-item-has-children', $classes, true );
+
+		$class_names = implode( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args, $depth ) );
+		$class_names = $class_names ? ' class="' . esc_attr( $class_names ) . ( $has_children ? ' din-has-children' : '' ) . '"' : '';
+
+		$output .= '<li' . $class_names . '>';
+
+		$atts           = array();
+		$atts['title']  = ! empty( $item->attr_title ) ? $item->attr_title : '';
+		$atts['target'] = ! empty( $item->target )     ? $item->target     : '';
+		$atts['rel']    = ! empty( $item->xfn )        ? $item->xfn        : '';
+		$atts['href']   = ! empty( $item->url )        ? $item->url        : '';
+
+		$atts = apply_filters( 'nav_menu_link_attributes', $atts, $item, $args, $depth );
+
+		$attributes = '';
+		foreach ( $atts as $attr => $value ) {
+			if ( ! empty( $value ) ) {
+				$value       = ( 'href' === $attr ) ? esc_url( $value ) : esc_attr( $value );
+				$attributes .= ' ' . $attr . '="' . $value . '"';
+			}
+		}
+
+		$title = apply_filters( 'the_title', $item->title, $item->ID );
+
+		$item_output  = isset( $args->before ) ? $args->before : '';
+		$item_output .= '<a' . $attributes . '>';
+		$item_output .= ( isset( $args->link_before ) ? $args->link_before : '' ) . $title . ( isset( $args->link_after ) ? $args->link_after : '' );
+
+		if ( $has_children ) {
+			$item_output .= ' <svg class="din-desktop-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+		}
+
+		$item_output .= '</a>';
+		$item_output .= isset( $args->after ) ? $args->after : '';
+
+		$output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
+	}
+}
+
 class DIN_Mobile_Nav_Walker extends Walker_Nav_Menu {
 	public function start_el( &$output, $item, $depth = 0, $args = null, $id = 0 ) {
 		$classes      = empty( $item->classes ) ? array() : (array) $item->classes;
@@ -271,7 +314,7 @@ class DIN_Frontend {
 		} else {
 			$menu_id         = get_option( 'din_desktop_menu', get_option( 'din_nav_menu', 0 ) );
 			$container_class = 'din-desktop-menu';
-			$walker          = '';
+			$walker          = new DIN_Desktop_Nav_Walker();
 		}
 
 		if ( $menu_id && wp_get_nav_menu_object( $menu_id ) ) {
