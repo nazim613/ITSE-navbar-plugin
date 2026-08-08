@@ -6,9 +6,25 @@
 
 	$(document).ready(function () {
 		var $body = $('body');
+		var $headerWrap = $('.din-header-wrap');
 		var $mobileToggle = $('.din-mobile-toggle');
 		var $drawerClose = $('.din-drawer-close');
 		var $overlay = $('#dinMobileOverlay');
+
+		// Handle Scroll Morphing to Dynamic Island Pill Header
+		function handleScrollMorph() {
+			var scrollTop = $(window).scrollTop();
+			if (scrollTop > 20) {
+				$headerWrap.addClass('din-scrolled');
+			} else {
+				$headerWrap.removeClass('din-scrolled');
+			}
+		}
+
+		$(window).on('scroll load resize', function () {
+			handleScrollMorph();
+		});
+		handleScrollMorph();
 
 		// Open Left Mobile Drawer
 		function openDrawer() {

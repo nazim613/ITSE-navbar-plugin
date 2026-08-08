@@ -157,6 +157,8 @@ class DIN_Frontend {
 			}
 			.din-island-nav {
 				background: {$island_bg} !important;
+			}
+			.din-header-wrap.din-scrolled .din-island-nav {
 				border-radius: {$island_radius} !important;
 				border: {$island_border} !important;
 			}
@@ -174,6 +176,13 @@ class DIN_Frontend {
 			.site-header,
 			.ast-main-header-wrap,
 			.ast-mobile-header-wrap,
+			.ast-above-header-bar,
+			.ast-above-header-wrap,
+			.ast-below-header-wrap,
+			.top-bar,
+			.announcement-bar,
+			.notification-bar,
+			.ast-top-header,
 			.elementor-location-header,
 			#site-header,
 			.header-main {
