@@ -136,18 +136,29 @@ class DIN_Frontend {
 
 	private function generate_inline_styles() {
 		$island_bg     = get_option( 'din_island_bg', '#ffffff' );
-		$island_radius = get_option( 'din_island_radius', 50 );
+		$island_radius = get_option( 'din_island_radius', '50px' );
+		$island_border = get_option( 'din_island_border', '1px solid rgba(0, 0, 0, 0.06)' );
 		$logo_width    = get_option( 'din_logo_width', 140 );
 		$offer_bg      = get_option( 'din_offer_bg', '#2d3e18' );
 		$offer_color   = get_option( 'din_offer_text_color', '#ffffff' );
 
+		if ( is_numeric( $island_radius ) ) {
+			$island_radius .= 'px';
+		}
+
 		return "
 			:root {
 				--din-island-bg: {$island_bg};
-				--din-island-radius: {$island_radius}px;
+				--din-island-radius: {$island_radius};
+				--din-island-border: {$island_border};
 				--din-logo-width: {$logo_width}px;
 				--din-offer-bg: {$offer_bg};
 				--din-offer-color: {$offer_color};
+			}
+			.din-island-nav {
+				background: {$island_bg} !important;
+				border-radius: {$island_radius} !important;
+				border: {$island_border} !important;
 			}
 		";
 	}

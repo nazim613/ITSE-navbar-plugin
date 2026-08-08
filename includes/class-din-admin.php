@@ -107,7 +107,9 @@ class DIN_Admin {
 			'din_show_account'      => 1,
 			'din_account_url'       => '',
 			'din_island_bg'         => '#ffffff',
-			'din_island_radius'     => 50,
+			'din_island_radius'     => '50px',
+			'din_island_border'     => '1px solid rgba(0, 0, 0, 0.06)',
+			'din_logo_width'        => 140,
 			'din_sticky'            => 1,
 		);
 
@@ -355,15 +357,24 @@ class DIN_Admin {
 					<h2><span class="dashicons dashicons-art"></span> Dynamic Island Aesthetic & Styling</h2>
 					<table class="form-table">
 						<tr>
-							<th scope="row">Navbar Background Color</th>
+							<th scope="row">Navbar Background (Color / Gradient / Code)</th>
 							<td>
-								<input type="text" name="din_island_bg" value="<?php echo esc_attr( get_option( 'din_island_bg', '#ffffff' ) ); ?>" class="din-color-picker" />
+								<input type="text" name="din_island_bg" value="<?php echo esc_attr( get_option( 'din_island_bg', '#ffffff' ) ); ?>" class="large-text" placeholder="#ffffff or linear-gradient(135deg, #1e293b, #0f172a)" />
+								<p class="description">Paste any CSS background code! Examples: <code>#ffffff</code>, <code>rgba(255,255,255,0.9)</code>, or <code>linear-gradient(135deg, #7c9c38 0%, #2d3e18 100%)</code>.</p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row">Navbar Border Radius (px)</th>
+							<th scope="row">Navbar Border Radius</th>
 							<td>
-								<input type="number" name="din_island_radius" value="<?php echo esc_attr( get_option( 'din_island_radius', 50 ) ); ?>" min="0" max="100" class="small-text" /> px
+								<input type="text" name="din_island_radius" value="<?php echo esc_attr( get_option( 'din_island_radius', '50px' ) ); ?>" class="regular-text" placeholder="50px" />
+								<p class="description">Enter custom radius code. Examples: <code>50px</code>, <code>20px</code>, <code>50%</code>, or <code>24px 24px 0 0</code>.</p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">Navbar Border Code</th>
+							<td>
+								<input type="text" name="din_island_border" value="<?php echo esc_attr( get_option( 'din_island_border', '1px solid rgba(0, 0, 0, 0.06)' ) ); ?>" class="large-text" placeholder="1px solid rgba(0, 0, 0, 0.06)" />
+								<p class="description">Enter CSS border style code. Examples: <code>1px solid rgba(0,0,0,0.06)</code>, <code>2px solid #7c9c38</code>, or <code>none</code>.</p>
 							</td>
 						</tr>
 					</table>
