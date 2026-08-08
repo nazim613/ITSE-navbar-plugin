@@ -34,12 +34,52 @@
 			$wrapper.toggleClass('din-lang-open');
 		});
 
-		// Language Option Selection Active Class Handler
+		// Language Option Selection Active Class & GTranslate Trigger Handler
 		$(document).on('click', '.din-lang-option', function (e) {
+			e.preventDefault();
+			var langCode = $(this).attr('data-lang') || 'en';
+
 			$('.din-lang-option').removeClass('active');
 			$(this).addClass('active');
 			$('.din-globe-wrapper').removeClass('din-lang-open');
+
+			// Trigger GTranslate
+			triggerGTranslate(langCode);
 		});
+
+		function triggerGTranslate(langCode) {
+			var langPair = 'en|' + langCode;
+
+			// Method 1: Global doGTranslate function
+			if (typeof window.doGTranslate === 'function') {
+				window.doGTranslate(langPair);
+				return;
+			}
+			if (typeof doGTranslate === 'function') {
+				doGTranslate(langPair);
+				return;
+			}
+
+			// Method 2: Select element in GTranslate widget
+			var $gtSelect = $('.gt_selector, select.gtranslate_select, #gtranslate_selector, .gtranslate_wrapper select');
+			if ($gtSelect.length) {
+				$gtSelect.val(langPair).trigger('change');
+				return;
+			}
+
+			// Method 3: GTranslate glink
+			var $glink = $('.glink[data-lang="' + langCode + '"], a.glink[lang="' + langCode + '"]');
+			if ($glink.length) {
+				$glink[0].click();
+				return;
+			}
+
+			// Method 4: Set googtrans cookie & reload
+			var host = window.location.hostname;
+			document.cookie = "googtrans=/en/" + langCode + "; path=/; domain=" + host;
+			document.cookie = "googtrans=/en/" + langCode + "; path=/;";
+			location.reload();
+		}
 
 		// Close Language Popover when clicking outside
 		$(document).on('click', function (e) {
