@@ -26,6 +26,28 @@
 		});
 		handleScrollMorph();
 
+		// Toggle Language Switcher Popover
+		$(document).on('click', '.din-globe-btn', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var $wrapper = $(this).closest('.din-globe-wrapper');
+			$wrapper.toggleClass('din-lang-open');
+		});
+
+		// Language Option Selection Active Class Handler
+		$(document).on('click', '.din-lang-option', function (e) {
+			$('.din-lang-option').removeClass('active');
+			$(this).addClass('active');
+			$('.din-globe-wrapper').removeClass('din-lang-open');
+		});
+
+		// Close Language Popover when clicking outside
+		$(document).on('click', function (e) {
+			if (!$(e.target).closest('.din-globe-wrapper').length) {
+				$('.din-globe-wrapper').removeClass('din-lang-open');
+			}
+		});
+
 		// Open Left Mobile Drawer
 		function openDrawer() {
 			$body.addClass('din-drawer-open');

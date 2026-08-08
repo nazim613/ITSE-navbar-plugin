@@ -103,6 +103,7 @@ class DIN_Admin {
 			'din_offer_text_color',
 			'din_offer_link',
 			'din_show_globe',
+			'din_lang_shortcode',
 			'din_show_cart',
 			'din_cart_shortcode',
 			'din_cart_url',
@@ -138,6 +139,7 @@ class DIN_Admin {
 			update_option( 'din_offer_text_color', isset( $_POST['din_offer_text_color'] ) ? sanitize_text_field( $_POST['din_offer_text_color'] ) : '#ffffff' );
 			update_option( 'din_offer_link', isset( $_POST['din_offer_link'] ) ? esc_url_raw( $_POST['din_offer_link'] ) : '' );
 			update_option( 'din_show_globe', isset( $_POST['din_show_globe'] ) ? 1 : 0 );
+			update_option( 'din_lang_shortcode', isset( $_POST['din_lang_shortcode'] ) ? sanitize_text_field( $_POST['din_lang_shortcode'] ) : '[gtranslate]' );
 			update_option( 'din_show_cart', isset( $_POST['din_show_cart'] ) ? 1 : 0 );
 			update_option( 'din_cart_shortcode', isset( $_POST['din_cart_shortcode'] ) ? sanitize_text_field( $_POST['din_cart_shortcode'] ) : '[fk_cart_menu]' );
 			update_option( 'din_cart_url', isset( $_POST['din_cart_url'] ) ? esc_url_raw( $_POST['din_cart_url'] ) : '' );
@@ -325,6 +327,13 @@ class DIN_Admin {
 									<input type="checkbox" name="din_show_globe" value="1" <?php checked( 1, get_option( 'din_show_globe', 1 ) ); ?> />
 									<span class="din-slider"></span>
 								</label>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">GTranslate / Language Shortcode</th>
+							<td>
+								<input type="text" name="din_lang_shortcode" value="<?php echo esc_attr( get_option( 'din_lang_shortcode', '[gtranslate]' ) ); ?>" class="large-text" placeholder="[gtranslate]" />
+								<p class="description">Default: <code>[gtranslate]</code>. Renders GTranslate plugin language selector dropdown when Earth/Globe icon is clicked.</p>
 							</td>
 						</tr>
 						<tr>
