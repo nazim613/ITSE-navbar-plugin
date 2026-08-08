@@ -590,6 +590,16 @@ body.din-drawer-open .din-mobile-drawer {
 	stroke-width: 2;
 }
 
+/* Language Shortcode Drawer Container */
+.din-drawer-lang-item {
+	margin-top: 10px;
+	padding-top: 10px;
+	border-top: 1px solid #f3f4f6;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+
 /* Responsive Media Queries (Mobile & Tablet) */
 @media (max-width: 992px) {
 	.din-nav-center {
@@ -598,7 +608,8 @@ body.din-drawer-open .din-mobile-drawer {
 
 	/* HIDE Earth/Globe and Profile icons on Mobile View */
 	.din-globe-btn,
-	.din-account-btn {
+	.din-account-btn,
+	.din-desktop-lang {
 		display: none !important;
 	}
 
@@ -625,5 +636,12 @@ body.din-drawer-open .din-mobile-drawer {
 	.din-logo-img {
 		max-height: 34px;
 		width: auto;
+	}
+}
+
+@media (min-width: 993px) {
+	.din-drawer-lang-item,
+	.din-mobile-lang {
+		display: none !important;
 	}
 }

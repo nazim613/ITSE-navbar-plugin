@@ -245,7 +245,7 @@ class DIN_Frontend {
 					<!-- Right: Action Icons & Mobile Toggle -->
 					<div class="din-nav-right">
 						<?php if ( get_option( 'din_show_globe', 1 ) ) : ?>
-							<div class="din-lang-wrapper">
+							<div class="din-lang-wrapper din-desktop-lang">
 								<?php
 								$lang_shortcode = get_option( 'din_lang_shortcode', '[gtranslate]' );
 								if ( ! empty( $lang_shortcode ) ) {
@@ -303,6 +303,19 @@ class DIN_Frontend {
 
 			<div class="din-drawer-body">
 				<?php $this->render_nav_menu( 'mobile' ); ?>
+
+				<?php if ( get_option( 'din_show_globe', 1 ) ) : ?>
+					<div class="din-drawer-lang-item">
+						<div class="din-lang-wrapper din-mobile-lang">
+							<?php
+							$lang_shortcode = get_option( 'din_lang_shortcode', '[gtranslate]' );
+							if ( ! empty( $lang_shortcode ) ) {
+								echo do_shortcode( $lang_shortcode );
+							}
+							?>
+						</div>
+					</div>
+				<?php endif; ?>
 
 				<?php if ( get_option( 'din_show_account', 1 ) ) : ?>
 					<div class="din-drawer-account-item">
