@@ -19,20 +19,40 @@ class ITSE_Navbar_Updater {
 	}
 
 	public function init() {
+		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update' ) );
 		add_filter( 'site_transient_update_plugins', array( $this, 'check_update' ) );
 		add_filter( 'plugins_api', array( $this, 'plugin_popup' ), 20, 3 );
 		add_filter( 'upgrader_post_install', array( $this, 'after_install' ), 10, 3 );
+
+		// Force check trigger
+		add_action( 'admin_init', array( $this, 'force_check_trigger' ) );
 	}
 
-	private function get_repository_info() {
-		if ( null !== $this->github_response ) {
+	public function force_check_trigger() {
+		if ( isset( $_GET['itse_force_check'] ) && current_user_can( 'manage_options' ) ) {
+			delete_transient( 'itse_github_release_cache' );
+			delete_site_transient( 'update_plugins' );
+			wp_clean_plugins_cache( true );
+			wp_redirect( remove_query_arg( 'itse_force_check' ) );
+			exit;
+		}
+	}
+
+	private function get_repository_info( $force = false ) {
+		if ( ! $force && null !== $this->github_response ) {
+			return;
+		}
+
+		$cache = get_transient( 'itse_github_release_cache' );
+		if ( ! $force && false !== $cache && is_array( $cache ) ) {
+			$this->github_response = $cache;
 			return;
 		}
 
 		$request_uri = sprintf( 'https://api.github.org/repos/%s/%s/releases/latest', $this->username, $this->repository );
 
 		$args = array(
-			'timeout' => 10,
+			'timeout' => 12,
 			'headers' => array(
 				'Accept'     => 'application/vnd.github.v3+json',
 				'User-Agent' => 'WordPress/' . get_bloginfo( 'version' ) . '; ' . home_url(),
@@ -45,12 +65,16 @@ class ITSE_Navbar_Updater {
 			return;
 		}
 
-		$this->github_response = json_decode( wp_remote_retrieve_body( $response ), true );
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+		if ( is_array( $body ) && ! empty( $body['tag_name'] ) ) {
+			$this->github_response = $body;
+			set_transient( 'itse_github_release_cache', $body, 1800 ); // Cache 30 mins
+		}
 	}
 
 	public function check_update( $transient ) {
-		if ( empty( $transient->checked ) ) {
-			return $transient;
+		if ( ! is_object( $transient ) ) {
+			$transient = new stdClass();
 		}
 
 		$this->get_repository_info();
@@ -75,7 +99,13 @@ class ITSE_Navbar_Updater {
 			$obj->url         = 'https://github.com/' . $this->username . '/' . $this->repository;
 			$obj->package     = $download_link;
 
-			$transient->response[ $this->plugin ] = $obj;
+			if ( ! isset( $transient->response ) || ! is_array( $transient->response ) ) {
+				$transient->response = array();
+			}
+
+			$transient->response[ $this->plugin ]                          = $obj;
+			$transient->response['itse-navbar/itse-navbar.php']            = $obj;
+			$transient->response['itse-navbar/dynamic-island-navbar.php'] = $obj;
 		}
 
 		return $transient;
@@ -120,10 +150,14 @@ class ITSE_Navbar_Updater {
 	public function after_install( $response, $hook_extra, $result ) {
 		global $wp_filesystem;
 
-		if ( isset( $hook_extra['plugin'] ) && $hook_extra['plugin'] === $this->plugin ) {
-			$install_directory = plugin_dir_path( $this->file );
-			$wp_filesystem->move( $result['destination'], $install_directory );
-			$result['destination'] = $install_directory;
+		if ( isset( $hook_extra['plugin'] ) && ( $hook_extra['plugin'] === $this->plugin || false !== strpos( $hook_extra['plugin'], 'itse-navbar' ) ) ) {
+			$proper_folder_name = 'itse-navbar';
+			$target_destination = WP_PLUGIN_DIR . '/' . $proper_folder_name;
+
+			if ( isset( $result['destination'] ) && $result['destination'] !== $target_destination ) {
+				$wp_filesystem->move( $result['destination'], $target_destination );
+				$result['destination'] = $target_destination;
+			}
 		}
 
 		return $result;

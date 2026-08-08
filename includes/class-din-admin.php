@@ -303,6 +303,15 @@ class DIN_Admin {
 								<span class="badge" style="background: #2271b1; color: #fff; padding: 4px 10px; border-radius: 12px; font-weight: 600;">v<?php echo esc_html( ITSE_NAVBAR_VERSION ); ?></span>
 							</td>
 						</tr>
+						<tr>
+							<th scope="row">Check Updates</th>
+							<td>
+								<a href="<?php echo esc_url( add_query_arg( 'itse_force_check', '1' ) ); ?>" class="button button-secondary">
+									<span class="dashicons dashicons-update" style="vertical-align: text-bottom; margin-right: 4px;"></span> Check GitHub Updates Now
+								</a>
+								<p class="description">Click to clear WordPress cache and instantly fetch latest release from GitHub!</p>
+							</td>
+						</tr>
 					</table>
 				</div>
 
