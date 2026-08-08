@@ -3,7 +3,7 @@
  * Plugin Name: ITSE Features & Navbar
  * Plugin URI:  https://github.com/nazim613/ITSE-navbar-plugin
  * Description: Replaces any WordPress header with a modern Dynamic Island floating ITSE navbar, offer bar, WooCommerce/FunnelKit cart icon, profile icon, separate desktop/mobile menus, mobile accordion submenus, and GitHub automatic update checker.
- * Version:     1.0.2
+ * Version:     1.0.3
  * Author:      ITSE
  * Text Domain: itse-navbar
  * License:     GPL-2.0+
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ITSE_NAVBAR_VERSION', '1.0.2' );
+define( 'ITSE_NAVBAR_VERSION', '1.0.3' );
 define( 'ITSE_NAVBAR_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ITSE_NAVBAR_URL', plugin_dir_url( __FILE__ ) );
 

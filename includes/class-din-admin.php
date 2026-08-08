@@ -9,6 +9,7 @@ class DIN_Admin {
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		add_action( 'admin_notices', array( $this, 'show_github_update_notice' ) );
 	}
 
 	public function add_settings_page() {
@@ -31,6 +32,33 @@ class DIN_Admin {
 			'itse-features',
 			array( $this, 'render_settings_page' )
 		);
+	}
+
+	public function show_github_update_notice() {
+		if ( ! current_user_can( 'update_plugins' ) ) {
+			return;
+		}
+
+		$transient       = get_site_transient( 'update_plugins' );
+		$plugin_basename = plugin_basename( ITSE_NAVBAR_DIR . 'itse-navbar.php' );
+
+		$update_info = null;
+		if ( isset( $transient->response[ $plugin_basename ] ) ) {
+			$update_info = $transient->response[ $plugin_basename ];
+		} elseif ( isset( $transient->response['itse-navbar/itse-navbar.php'] ) ) {
+			$update_info = $transient->response['itse-navbar/itse-navbar.php'];
+		}
+
+		if ( $update_info && ! empty( $update_info->new_version ) ) {
+			$update_url = wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . urlencode( $plugin_basename ) ), 'upgrade-plugin_' . $plugin_basename );
+			echo '<div class="notice notice-warning is-dismissible" style="padding: 12px 18px; border-left: 4px solid #2271b1; background: #fff; margin-top: 15px;">';
+			echo '<p style="font-size: 15px; margin: 0; display: flex; align-items: center; gap: 10px;">';
+			echo '🚀 <strong>A new version (v' . esc_html( $update_info->new_version ) . ') is available for ITSE Features & Navbar!</strong> ';
+			echo '<a href="' . esc_url( $update_url ) . '" class="button button-primary">Update Now</a>';
+			echo '<a href="' . esc_url( $update_info->url ) . '" target="_blank" class="button button-secondary">View Release Notes</a>';
+			echo '</p>';
+			echo '</div>';
+		}
 	}
 
 	public function enqueue_admin_assets( $hook ) {
