@@ -139,6 +139,11 @@ class DIN_Frontend {
 		$offer_text   = get_option( 'din_offer_text', '✨ BUY 3 TO SAVE 20% ✨' );
 		$offer_link   = get_option( 'din_offer_link', '' );
 		$logo_url     = get_option( 'din_logo_url', '' );
+
+		$account_url = get_option( 'din_account_url', '' );
+		if ( empty( $account_url ) ) {
+			$account_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : wp_login_url();
+		}
 		?>
 
 		<div class="din-header-wrap <?php echo esc_attr( $sticky_class ); ?>">
@@ -189,12 +194,6 @@ class DIN_Frontend {
 						<?php endif; ?>
 
 						<?php if ( get_option( 'din_show_account', 1 ) ) : ?>
-							<?php
-							$account_url = get_option( 'din_account_url', '' );
-							if ( empty( $account_url ) ) {
-								$account_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : wp_login_url();
-							}
-							?>
 							<a href="<?php echo esc_url( $account_url ); ?>" class="din-action-btn din-account-btn" title="<?php esc_attr_e( 'My Account', 'itse-navbar' ); ?>">
 								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
 									<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -238,16 +237,18 @@ class DIN_Frontend {
 
 			<div class="din-drawer-body">
 				<?php $this->render_nav_menu( 'mobile' ); ?>
-			</div>
 
-			<div class="din-drawer-footer">
-				<a href="<?php echo esc_url( $account_url ); ?>" class="din-drawer-account-link">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-						<circle cx="12" cy="7" r="4"></circle>
-					</svg>
-					<span><?php is_user_logged_in() ? esc_html_e( 'My Account', 'itse-navbar' ) : esc_html_e( 'Login / Register', 'itse-navbar' ); ?></span>
-				</a>
+				<?php if ( get_option( 'din_show_account', 1 ) ) : ?>
+					<div class="din-drawer-account-item">
+						<a href="<?php echo esc_url( $account_url ); ?>" class="din-drawer-inline-account">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+								<circle cx="12" cy="7" r="4"></circle>
+							</svg>
+							<span><?php is_user_logged_in() ? esc_html_e( 'My Account', 'itse-navbar' ) : esc_html_e( 'Login / Register', 'itse-navbar' ); ?></span>
+						</a>
+					</div>
+				<?php endif; ?>
 			</div>
 		</aside>
 		<?php
