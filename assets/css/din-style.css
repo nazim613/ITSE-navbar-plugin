@@ -23,7 +23,10 @@
 
 .din-header-wrap *,
 .din-header-wrap *::before,
-.din-header-wrap *::after {
+.din-header-wrap *::after,
+.din-mobile-drawer *,
+.din-mobile-drawer *::before,
+.din-mobile-drawer *::after {
 	box-sizing: border-box;
 }
 
@@ -251,6 +254,17 @@
 	background: #f3f4f6;
 }
 
+/* Force visibility & stroke for all SVG icons against theme overrides */
+.din-header-wrap svg,
+.din-mobile-drawer svg,
+.din-drawer-close svg,
+.din-submenu-toggle svg {
+	display: inline-block !important;
+	vertical-align: middle !important;
+	opacity: 1 !important;
+	visibility: visible !important;
+}
+
 /* Mobile Off-Canvas Drawer (Left Slide-In) */
 .din-mobile-overlay {
 	position: fixed;
@@ -302,23 +316,33 @@ body.din-drawer-open .din-mobile-drawer {
 	width: auto;
 }
 
+/* Close Icon Button inside Drawer Header */
 .din-drawer-close {
-	background: #f3f4f6;
-	border: none;
-	color: #374151;
-	width: 36px;
-	height: 36px;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	transition: background 0.2s ease, transform 0.2s ease;
+	background: #f3f4f6 !important;
+	border: 1px solid #e5e7eb !important;
+	color: #1f2937 !important;
+	width: 38px !important;
+	height: 38px !important;
+	border-radius: 50% !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	cursor: pointer !important;
+	outline: none !important;
+	padding: 0 !important;
+	transition: background 0.2s ease, transform 0.2s ease !important;
 }
 
 .din-drawer-close:hover {
-	background: #e5e7eb;
-	transform: rotate(90deg);
+	background: #e5e7eb !important;
+	transform: rotate(90deg) !important;
+}
+
+.din-drawer-close svg {
+	width: 20px !important;
+	height: 20px !important;
+	stroke: #1f2937 !important;
+	stroke-width: 2.5px !important;
 }
 
 .din-drawer-body {
@@ -361,32 +385,39 @@ body.din-drawer-open .din-mobile-drawer {
 	color: var(--din-accent);
 }
 
-/* Accordion Toggle Button */
+/* Accordion Toggle Arrow Button */
 .din-submenu-toggle {
-	background: transparent;
-	border: none;
-	color: #6b7280;
-	width: 36px;
-	height: 36px;
-	border-radius: 8px;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	transition: background 0.2s ease, color 0.2s ease;
+	background: #f3f4f6 !important;
+	border: 1px solid #e5e7eb !important;
+	color: #374151 !important;
+	width: 32px !important;
+	height: 32px !important;
+	border-radius: 8px !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	cursor: pointer !important;
+	margin-left: 6px !important;
+	padding: 0 !important;
+	outline: none !important;
+	transition: background 0.2s ease, color 0.2s ease !important;
 }
 
 .din-submenu-toggle:hover {
-	background: #f3f4f6;
-	color: var(--din-text-dark);
+	background: #e5e7eb !important;
+	color: var(--din-text-dark) !important;
 }
 
 .din-submenu-toggle svg {
-	transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+	width: 16px !important;
+	height: 16px !important;
+	stroke: #374151 !important;
+	stroke-width: 2.5px !important;
+	transition: transform 0.25s ease !important;
 }
 
 .din-menu.din-mobile-menu li.din-menu-open > .din-submenu-toggle svg {
-	transform: rotate(180deg);
+	transform: rotate(180deg) !important;
 }
 
 /* Collapsible Submenus (Hidden by default in mobile accordion) */

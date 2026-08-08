@@ -43,47 +43,47 @@
 			}
 		});
 
-		// Mobile Accordion Submenu Toggle
-		$('.din-mobile-menu li').each(function () {
+		// Accordion Submenu SlideToggle Handler
+		$(document).on('click', '.din-mobile-menu .din-submenu-toggle', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var $btn = $(this);
+			var $li = $btn.closest('li');
+			var $subMenu = $li.children('ul.sub-menu');
+
+			$li.toggleClass('din-menu-open');
+			$subMenu.stop(true, true).slideToggle(220);
+		});
+
+		// Fallback: If no button exists yet, attach to parent items with children
+		$('.din-mobile-menu li.menu-item-has-children, .din-mobile-menu li.din-has-children').each(function () {
 			var $li = $(this);
 			var $subMenu = $li.children('ul.sub-menu');
 
-			if ($subMenu.length > 0) {
-				$li.addClass('din-has-children');
-
-				// Create Accordion Dropdown Arrow Button
+			if ($subMenu.length > 0 && $li.find('.din-submenu-toggle').length === 0) {
 				var $toggleBtn = $(
 					'<button type="button" class="din-submenu-toggle" aria-label="Toggle Submenu">' +
-						'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+						'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#374151" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
 							'<polyline points="6 9 12 15 18 9"></polyline>' +
 						'</svg>' +
 					'</button>'
 				);
 
-				// Wrap link and toggle button in a header row if needed
 				var $link = $li.children('a');
 				if ($link.length) {
 					$link.after($toggleBtn);
 				} else {
 					$li.prepend($toggleBtn);
 				}
+			}
+		});
 
-				// Toggle Accordion on Arrow Click
-				$toggleBtn.on('click', function (e) {
-					e.preventDefault();
-					e.stopPropagation();
-					$li.toggleClass('din-menu-open');
-					$subMenu.stop(true, true).slideToggle(250);
-				});
-
-				// If link is empty or "#", toggle on link click as well
-				$link.on('click', function (e) {
-					var href = $(this).attr('href');
-					if (!href || href === '#' || href === 'javascript:void(0);') {
-						e.preventDefault();
-						$toggleBtn.trigger('click');
-					}
-				});
+		// If link is empty or "#", toggle on link click
+		$(document).on('click', '.din-mobile-menu li.menu-item-has-children > a, .din-mobile-menu li.din-has-children > a', function (e) {
+			var href = $(this).attr('href');
+			if (!href || href === '#' || href === 'javascript:void(0);') {
+				e.preventDefault();
+				$(this).siblings('.din-submenu-toggle').trigger('click');
 			}
 		});
 

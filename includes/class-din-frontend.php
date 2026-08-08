@@ -3,6 +3,51 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+class DIN_Mobile_Nav_Walker extends Walker_Nav_Menu {
+	public function start_el( &$output, $item, $depth = 0, $args = null, $id = 0 ) {
+		$classes      = empty( $item->classes ) ? array() : (array) $item->classes;
+		$has_children = in_array( 'menu-item-has-children', $classes, true );
+
+		$class_names = implode( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args, $depth ) );
+		$class_names = $class_names ? ' class="' . esc_attr( $class_names ) . ( $has_children ? ' din-has-children' : '' ) . '"' : '';
+
+		$output .= '<li' . $class_names . '>';
+
+		$atts           = array();
+		$atts['title']  = ! empty( $item->attr_title ) ? $item->attr_title : '';
+		$atts['target'] = ! empty( $item->target )     ? $item->target     : '';
+		$atts['rel']    = ! empty( $item->xfn )        ? $item->xfn        : '';
+		$atts['href']   = ! empty( $item->url )        ? $item->url        : '';
+
+		$atts = apply_filters( 'nav_menu_link_attributes', $atts, $item, $args, $depth );
+
+		$attributes = '';
+		foreach ( $atts as $attr => $value ) {
+			if ( ! empty( $value ) ) {
+				$value       = ( 'href' === $attr ) ? esc_url( $value ) : esc_attr( $value );
+				$attributes .= ' ' . $attr . '="' . $value . '"';
+			}
+		}
+
+		$title = apply_filters( 'the_title', $item->title, $item->ID );
+
+		$item_output  = isset( $args->before ) ? $args->before : '';
+		$item_output .= '<a' . $attributes . '>';
+		$item_output .= ( isset( $args->link_before ) ? $args->link_before : '' ) . $title . ( isset( $args->link_after ) ? $args->link_after : '' );
+		$item_output .= '</a>';
+
+		if ( $has_children ) {
+			$item_output .= '<button type="button" class="din-submenu-toggle" aria-label="Toggle Submenu">';
+			$item_output .= '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#374151" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+			$item_output .= '</button>';
+		}
+
+		$item_output .= isset( $args->after ) ? $args->after : '';
+
+		$output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
+	}
+}
+
 class DIN_Frontend {
 
 	public function init() {
@@ -184,7 +229,7 @@ class DIN_Frontend {
 				</div>
 				<!-- Close Icon Button inside Mobile Drawer Tray -->
 				<button type="button" class="din-drawer-close" aria-label="<?php esc_attr_e( 'Close Menu', 'itse-navbar' ); ?>">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1f2937" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; stroke: #1f2937; stroke-width: 2.5px;">
 						<line x1="18" y1="6" x2="6" y2="18"></line>
 						<line x1="6" y1="6" x2="18" y2="18"></line>
 					</svg>
@@ -221,21 +266,25 @@ class DIN_Frontend {
 				$menu_id = get_option( 'din_desktop_menu', get_option( 'din_nav_menu', 0 ) );
 			}
 			$container_class = 'din-mobile-menu';
+			$walker          = new DIN_Mobile_Nav_Walker();
 		} else {
 			$menu_id         = get_option( 'din_desktop_menu', get_option( 'din_nav_menu', 0 ) );
 			$container_class = 'din-desktop-menu';
+			$walker          = '';
 		}
 
 		if ( $menu_id && wp_get_nav_menu_object( $menu_id ) ) {
-			wp_nav_menu(
-				array(
-					'menu'        => $menu_id,
-					'container'   => 'ul',
-					'menu_class'  => 'din-menu ' . $container_class,
-					'fallback_cb' => array( $this, 'render_fallback_menu' ),
-					'depth'       => 3,
-				)
+			$menu_args = array(
+				'menu'        => $menu_id,
+				'container'   => 'ul',
+				'menu_class'  => 'din-menu ' . $container_class,
+				'fallback_cb' => array( $this, 'render_fallback_menu' ),
+				'depth'       => 3,
 			);
+			if ( ! empty( $walker ) ) {
+				$menu_args['walker'] = $walker;
+			}
+			wp_nav_menu( $menu_args );
 		} else {
 			$this->render_fallback_menu( $container_class );
 		}
