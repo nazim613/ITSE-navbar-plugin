@@ -147,7 +147,7 @@
 	color: var(--din-accent);
 }
 
-/* Dropdown Sub-menus */
+/* Dropdown Sub-menus (Desktop) */
 .din-menu.din-desktop-menu ul.sub-menu {
 	position: absolute;
 	top: 100%;
@@ -324,9 +324,10 @@ body.din-drawer-open .din-mobile-drawer {
 .din-drawer-body {
 	flex: 1;
 	overflow-y: auto;
-	padding: 20px;
+	padding: 16px 20px;
 }
 
+/* Mobile Accordion Menu Styling */
 .din-menu.din-mobile-menu {
 	list-style: none;
 	margin: 0;
@@ -334,13 +335,19 @@ body.din-drawer-open .din-mobile-drawer {
 }
 
 .din-menu.din-mobile-menu li {
-	margin-bottom: 12px;
+	margin-bottom: 4px;
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .din-menu.din-mobile-menu li a {
+	flex: 1;
 	display: block;
-	padding: 10px 14px;
-	font-size: 16px;
+	padding: 10px 12px;
+	font-size: 15px;
 	font-weight: 500;
 	color: #374151;
 	text-decoration: none;
@@ -349,21 +356,54 @@ body.din-drawer-open .din-mobile-drawer {
 }
 
 .din-menu.din-mobile-menu li a:hover,
-.din-menu.din-mobile-menu li.current-menu-item a {
+.din-menu.din-mobile-menu li.current-menu-item > a {
 	background: #f3f4f6;
 	color: var(--din-accent);
 }
 
+/* Accordion Toggle Button */
+.din-submenu-toggle {
+	background: transparent;
+	border: none;
+	color: #6b7280;
+	width: 36px;
+	height: 36px;
+	border-radius: 8px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background 0.2s ease, color 0.2s ease;
+}
+
+.din-submenu-toggle:hover {
+	background: #f3f4f6;
+	color: var(--din-text-dark);
+}
+
+.din-submenu-toggle svg {
+	transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.din-menu.din-mobile-menu li.din-menu-open > .din-submenu-toggle svg {
+	transform: rotate(180deg);
+}
+
+/* Collapsible Submenus (Hidden by default in mobile accordion) */
 .din-menu.din-mobile-menu ul.sub-menu {
+	display: none;
+	width: 100%;
 	list-style: none;
-	padding-left: 16px;
-	margin-top: 6px;
+	padding-left: 14px;
+	margin: 2px 0 6px 0;
+	border-left: 2px solid #f3f4f6;
 }
 
 .din-menu.din-mobile-menu ul.sub-menu li a {
 	font-size: 14px;
 	font-weight: 400;
-	color: #6b7280;
+	color: #4b5563;
+	padding: 8px 10px;
 }
 
 .din-drawer-footer {
@@ -394,6 +434,12 @@ body.din-drawer-open .din-mobile-drawer {
 /* Responsive Media Queries (Mobile & Tablet) */
 @media (max-width: 992px) {
 	.din-nav-center {
+		display: none !important;
+	}
+
+	/* HIDE Earth/Globe and Profile icons on Mobile View */
+	.din-globe-btn,
+	.din-account-btn {
 		display: none !important;
 	}
 

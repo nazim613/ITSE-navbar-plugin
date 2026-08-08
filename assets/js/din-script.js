@@ -1,5 +1,5 @@
 /**
- * Dynamic Island Navbar Frontend Script
+ * Dynamic Island ITSE Navbar Frontend Script
  */
 (function ($) {
 	'use strict';
@@ -9,7 +9,6 @@
 		var $mobileToggle = $('.din-mobile-toggle');
 		var $drawerClose = $('.din-drawer-close');
 		var $overlay = $('#dinMobileOverlay');
-		var $mobileDrawer = $('#dinMobileDrawer');
 
 		// Open Left Mobile Drawer
 		function openDrawer() {
@@ -44,11 +43,54 @@
 			}
 		});
 
+		// Mobile Accordion Submenu Toggle
+		$('.din-mobile-menu li').each(function () {
+			var $li = $(this);
+			var $subMenu = $li.children('ul.sub-menu');
+
+			if ($subMenu.length > 0) {
+				$li.addClass('din-has-children');
+
+				// Create Accordion Dropdown Arrow Button
+				var $toggleBtn = $(
+					'<button type="button" class="din-submenu-toggle" aria-label="Toggle Submenu">' +
+						'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+							'<polyline points="6 9 12 15 18 9"></polyline>' +
+						'</svg>' +
+					'</button>'
+				);
+
+				// Wrap link and toggle button in a header row if needed
+				var $link = $li.children('a');
+				if ($link.length) {
+					$link.after($toggleBtn);
+				} else {
+					$li.prepend($toggleBtn);
+				}
+
+				// Toggle Accordion on Arrow Click
+				$toggleBtn.on('click', function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+					$li.toggleClass('din-menu-open');
+					$subMenu.stop(true, true).slideToggle(250);
+				});
+
+				// If link is empty or "#", toggle on link click as well
+				$link.on('click', function (e) {
+					var href = $(this).attr('href');
+					if (!href || href === '#' || href === 'javascript:void(0);') {
+						e.preventDefault();
+						$toggleBtn.trigger('click');
+					}
+				});
+			}
+		});
+
 		// FunnelKit & WooCommerce Cart Trigger Integration
 		$('.din-cart-btn').on('click', function (e) {
 			var $this = $(this);
 
-			// Check if FunnelKit Cart Drawer button or event exists on page
 			if (typeof fk_cart_drawer !== 'undefined' || $('.fk-cart-open-btn, [data-fk-cart-toggle]').length > 0) {
 				var $fkBtn = $('.fk-cart-open-btn, [data-fk-cart-toggle]').first();
 				if ($fkBtn.length) {
@@ -58,11 +100,9 @@
 				}
 			}
 
-			// If URL is #cart or hash, prevent default page jump
 			var href = $this.attr('href');
 			if (href === '#' || href === '#cart') {
 				e.preventDefault();
-				// Trigger custom WooCommerce slide cart if present
 				$(document.body).trigger('wc_fragment_refresh');
 			}
 		});
