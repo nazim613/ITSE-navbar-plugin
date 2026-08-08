@@ -19,13 +19,29 @@ class ITSE_Navbar_Updater {
 	}
 
 	public function init() {
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update' ) );
-		add_filter( 'site_transient_update_plugins', array( $this, 'check_update' ) );
+		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update' ), 20 );
+		add_filter( 'site_transient_update_plugins', array( $this, 'check_update' ), 20 );
 		add_filter( 'plugins_api', array( $this, 'plugin_popup' ), 20, 3 );
 		add_filter( 'upgrader_post_install', array( $this, 'after_install' ), 10, 3 );
 
-		// Force check trigger
+		add_action( 'admin_init', array( $this, 'auto_refresh_on_admin_pages' ) );
 		add_action( 'admin_init', array( $this, 'force_check_trigger' ) );
+	}
+
+	public function auto_refresh_on_admin_pages() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		global $pagenow;
+		if ( in_array( $pagenow, array( 'plugins.php', 'update-core.php', 'admin.php' ), true ) ) {
+			$cache = get_transient( 'itse_github_release_cache' );
+			if ( false === $cache ) {
+				// Cache expired or missing -> force check GitHub live
+				$this->get_repository_info( true );
+				delete_site_transient( 'update_plugins' );
+			}
+		}
 	}
 
 	public function force_check_trigger() {
@@ -68,7 +84,7 @@ class ITSE_Navbar_Updater {
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 		if ( is_array( $body ) && ! empty( $body['tag_name'] ) ) {
 			$this->github_response = $body;
-			set_transient( 'itse_github_release_cache', $body, 1800 ); // Cache 30 mins
+			set_transient( 'itse_github_release_cache', $body, 600 ); // Cache for 10 minutes
 		}
 	}
 
@@ -83,8 +99,13 @@ class ITSE_Navbar_Updater {
 			return $transient;
 		}
 
-		$latest_version  = ltrim( $this->github_response['tag_name'], 'v' );
+		$latest_version = ltrim( $this->github_response['tag_name'], 'v' );
+		
+		// Installed version check
 		$current_version = ITSE_NAVBAR_VERSION;
+		if ( isset( $transient->checked[ $this->plugin ] ) ) {
+			$current_version = $transient->checked[ $this->plugin ];
+		}
 
 		if ( version_compare( $current_version, $latest_version, '<' ) ) {
 			$download_link = $this->github_response['zipball_url'];
@@ -92,12 +113,16 @@ class ITSE_Navbar_Updater {
 				$download_link = $this->github_response['assets'][0]['browser_download_url'];
 			}
 
-			$obj              = new stdClass();
-			$obj->slug        = 'itse-navbar';
-			$obj->plugin      = $this->plugin;
-			$obj->new_version = $latest_version;
-			$obj->url         = 'https://github.com/' . $this->username . '/' . $this->repository;
-			$obj->package     = $download_link;
+			$obj               = new stdClass();
+			$obj->id           = 'itse-navbar';
+			$obj->slug         = 'itse-navbar';
+			$obj->plugin       = $this->plugin;
+			$obj->new_version  = $latest_version;
+			$obj->url          = 'https://github.com/' . $this->username . '/' . $this->repository;
+			$obj->package      = $download_link;
+			$obj->requires     = '5.0';
+			$obj->tested       = '6.7';
+			$obj->requires_php = '7.4';
 
 			if ( ! isset( $transient->response ) || ! is_array( $transient->response ) ) {
 				$transient->response = array();
@@ -106,6 +131,17 @@ class ITSE_Navbar_Updater {
 			$transient->response[ $this->plugin ]                          = $obj;
 			$transient->response['itse-navbar/itse-navbar.php']            = $obj;
 			$transient->response['itse-navbar/dynamic-island-navbar.php'] = $obj;
+
+			// CRITICAL FOR WORDPRESS CORE: Unset from no_update array so WP displays the update notice
+			if ( isset( $transient->no_update[ $this->plugin ] ) ) {
+				unset( $transient->no_update[ $this->plugin ] );
+			}
+			if ( isset( $transient->no_update['itse-navbar/itse-navbar.php'] ) ) {
+				unset( $transient->no_update['itse-navbar/itse-navbar.php'] );
+			}
+			if ( isset( $transient->no_update['itse-navbar/dynamic-island-navbar.php'] ) ) {
+				unset( $transient->no_update['itse-navbar/dynamic-island-navbar.php'] );
+			}
 		}
 
 		return $transient;
