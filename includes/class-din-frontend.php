@@ -245,36 +245,13 @@ class DIN_Frontend {
 					<!-- Right: Action Icons & Mobile Toggle -->
 					<div class="din-nav-right">
 						<?php if ( get_option( 'din_show_globe', 1 ) ) : ?>
-							<div class="din-globe-wrapper">
-								<button type="button" class="din-action-btn din-globe-btn" aria-label="<?php esc_attr_e( 'Select Language', 'itse-navbar' ); ?>" title="<?php esc_attr_e( 'Language / Translate', 'itse-navbar' ); ?>">
-									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-										<circle cx="12" cy="12" r="10"></circle>
-										<line x1="2" y1="12" x2="22" y2="12"></line>
-										<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-									</svg>
-								</button>
-								<div class="din-lang-dropdown">
-									<ul class="din-lang-list">
-										<li>
-											<a href="#" class="din-lang-option din-lang-en active" data-lang="en">
-												<span class="din-flag">🇬🇧</span> <span class="din-lang-name">English</span>
-											</a>
-										</li>
-										<li>
-											<a href="#" class="din-lang-option din-lang-ar" data-lang="ar">
-												<span class="din-flag">🇦🇪</span> <span class="din-lang-name">العربية</span>
-											</a>
-										</li>
-									</ul>
-								</div>
-								<div class="din-gtranslate-hidden" style="display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important;">
-									<?php
-									$lang_shortcode = get_option( 'din_lang_shortcode', '[gtranslate]' );
-									if ( ! empty( $lang_shortcode ) ) {
-										echo do_shortcode( $lang_shortcode );
-									}
-									?>
-								</div>
+							<div class="din-lang-wrapper">
+								<?php
+								$lang_shortcode = get_option( 'din_lang_shortcode', '[gtranslate]' );
+								if ( ! empty( $lang_shortcode ) ) {
+									echo do_shortcode( $lang_shortcode );
+								}
+								?>
 							</div>
 						<?php endif; ?>
 
