@@ -8,6 +8,7 @@ class DIN_Admin {
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_init', array( $this, 'handle_save_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'admin_notices', array( $this, 'show_github_update_notice' ) );
 	}
@@ -88,33 +89,64 @@ class DIN_Admin {
 
 	public function register_settings() {
 		$options = array(
-			'din_enable'            => 1,
-			'din_hide_theme_header' => 1,
-			'din_desktop_menu'      => 0,
-			'din_mobile_menu'       => 0,
-			'din_nav_menu'          => 0, // Fallback legacy
-			'din_logo_url'          => '',
-			'din_logo_width'        => 140,
-			'din_offer_enable'      => 1,
-			'din_offer_text'        => '✨ BUY 3 TO SAVE 20% ✨',
-			'din_offer_bg'          => '#2d3e18',
-			'din_offer_text_color'  => '#ffffff',
-			'din_offer_link'        => '',
-			'din_show_globe'        => 1,
-			'din_show_cart'         => 1,
-			'din_cart_shortcode'    => '[fk_cart_menu]',
-			'din_cart_url'          => '',
-			'din_show_account'      => 1,
-			'din_account_url'       => '',
-			'din_island_bg'         => '#ffffff',
-			'din_island_radius'     => '50px',
-			'din_island_border'     => '1px solid rgba(0, 0, 0, 0.06)',
-			'din_logo_width'        => 140,
-			'din_sticky'            => 1,
+			'din_enable',
+			'din_hide_theme_header',
+			'din_desktop_menu',
+			'din_mobile_menu',
+			'din_nav_menu',
+			'din_logo_url',
+			'din_logo_width',
+			'din_offer_enable',
+			'din_offer_text',
+			'din_offer_bg',
+			'din_offer_text_color',
+			'din_offer_link',
+			'din_show_globe',
+			'din_show_cart',
+			'din_cart_shortcode',
+			'din_cart_url',
+			'din_show_account',
+			'din_account_url',
+			'din_island_bg',
+			'din_island_radius',
+			'din_island_border',
+			'din_sticky',
 		);
 
-		foreach ( $options as $option_name => $default_value ) {
+		foreach ( $options as $option_name ) {
 			register_setting( 'din_settings_group', $option_name );
+		}
+	}
+
+	public function handle_save_settings() {
+		if ( isset( $_POST['din_save_settings'] ) && check_admin_referer( 'din_settings_action', 'din_settings_nonce' ) ) {
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return;
+			}
+
+			update_option( 'din_enable', isset( $_POST['din_enable'] ) ? 1 : 0 );
+			update_option( 'din_hide_theme_header', isset( $_POST['din_hide_theme_header'] ) ? 1 : 0 );
+			update_option( 'din_desktop_menu', isset( $_POST['din_desktop_menu'] ) ? intval( $_POST['din_desktop_menu'] ) : 0 );
+			update_option( 'din_mobile_menu', isset( $_POST['din_mobile_menu'] ) ? intval( $_POST['din_mobile_menu'] ) : 0 );
+			update_option( 'din_logo_url', isset( $_POST['din_logo_url'] ) ? esc_url_raw( $_POST['din_logo_url'] ) : '' );
+			update_option( 'din_logo_width', isset( $_POST['din_logo_width'] ) ? intval( $_POST['din_logo_width'] ) : 140 );
+			update_option( 'din_offer_enable', isset( $_POST['din_offer_enable'] ) ? 1 : 0 );
+			update_option( 'din_offer_text', isset( $_POST['din_offer_text'] ) ? wp_kses_post( $_POST['din_offer_text'] ) : '' );
+			update_option( 'din_offer_bg', isset( $_POST['din_offer_bg'] ) ? sanitize_text_field( $_POST['din_offer_bg'] ) : '#2d3e18' );
+			update_option( 'din_offer_text_color', isset( $_POST['din_offer_text_color'] ) ? sanitize_text_field( $_POST['din_offer_text_color'] ) : '#ffffff' );
+			update_option( 'din_offer_link', isset( $_POST['din_offer_link'] ) ? esc_url_raw( $_POST['din_offer_link'] ) : '' );
+			update_option( 'din_show_globe', isset( $_POST['din_show_globe'] ) ? 1 : 0 );
+			update_option( 'din_show_cart', isset( $_POST['din_show_cart'] ) ? 1 : 0 );
+			update_option( 'din_cart_shortcode', isset( $_POST['din_cart_shortcode'] ) ? sanitize_text_field( $_POST['din_cart_shortcode'] ) : '[fk_cart_menu]' );
+			update_option( 'din_cart_url', isset( $_POST['din_cart_url'] ) ? esc_url_raw( $_POST['din_cart_url'] ) : '' );
+			update_option( 'din_show_account', isset( $_POST['din_show_account'] ) ? 1 : 0 );
+			update_option( 'din_account_url', isset( $_POST['din_account_url'] ) ? esc_url_raw( $_POST['din_account_url'] ) : '' );
+			update_option( 'din_island_bg', isset( $_POST['din_island_bg'] ) ? sanitize_text_field( $_POST['din_island_bg'] ) : '#ffffff' );
+			update_option( 'din_island_radius', isset( $_POST['din_island_radius'] ) ? sanitize_text_field( $_POST['din_island_radius'] ) : '50px' );
+			update_option( 'din_island_border', isset( $_POST['din_island_border'] ) ? sanitize_text_field( $_POST['din_island_border'] ) : '1px solid rgba(0, 0, 0, 0.06)' );
+			update_option( 'din_sticky', isset( $_POST['din_sticky'] ) ? 1 : 0 );
+
+			add_settings_error( 'din_messages', 'din_message', __( 'ITSE Features Settings Saved Successfully!', 'itse-navbar' ), 'updated' );
 		}
 	}
 
@@ -123,7 +155,7 @@ class DIN_Admin {
 			return;
 		}
 
-		$menus = wp_get_nav_menus();
+		$menus           = wp_get_nav_menus();
 		$wc_account_page = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : wp_login_url();
 		$wc_cart_page    = function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '#cart';
 		?>
@@ -131,9 +163,10 @@ class DIN_Admin {
 			<h1><span class="dashicons dashicons-menu-alt3" style="font-size: 30px; width: 30px; height: 30px; vertical-align: middle; margin-right: 8px;"></span> ITSE Features & Navbar Settings</h1>
 			<p class="description">Customize your website header logo, select separate Desktop & Mobile menus, offer banner, and WooCommerce/FunnelKit action icons.</p>
 
-			<form method="post" action="options.php" class="din-form">
-				<?php settings_fields( 'din_settings_group' ); ?>
-				<?php do_settings_sections( 'din_settings_group' ); ?>
+			<?php settings_errors( 'din_messages' ); ?>
+
+			<form method="post" action="" class="din-form">
+				<?php wp_nonce_field( 'din_settings_action', 'din_settings_nonce' ); ?>
 
 				<div class="din-card">
 					<h2><span class="dashicons dashicons-admin-generic"></span> General Settings</h2>
@@ -250,31 +283,31 @@ class DIN_Admin {
 							</td>
 						</tr>
 						<tr>
-							<th scope="row">Offer Link (Optional)</th>
-							<td>
-								<input type="url" name="din_offer_link" value="<?php echo esc_attr( get_option( 'din_offer_link', '' ) ); ?>" class="large-text" placeholder="https://..." />
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">Background Color</th>
+							<th scope="row">Offer Background Color</th>
 							<td>
 								<input type="text" name="din_offer_bg" value="<?php echo esc_attr( get_option( 'din_offer_bg', '#2d3e18' ) ); ?>" class="din-color-picker" />
 							</td>
 						</tr>
 						<tr>
-							<th scope="row">Text Color</th>
+							<th scope="row">Offer Text Color</th>
 							<td>
 								<input type="text" name="din_offer_text_color" value="<?php echo esc_attr( get_option( 'din_offer_text_color', '#ffffff' ) ); ?>" class="din-color-picker" />
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">Offer Link URL</th>
+							<td>
+								<input type="url" name="din_offer_link" value="<?php echo esc_attr( get_option( 'din_offer_link', '' ) ); ?>" class="large-text" placeholder="https://example.com/shop" />
 							</td>
 						</tr>
 					</table>
 				</div>
 
 				<div class="din-card">
-					<h2><span class="dashicons dashicons-cart"></span> Action Icons (Cart, Account, Globe)</h2>
+					<h2><span class="dashicons dashicons-cart"></span> Action Icons (Right Header)</h2>
 					<table class="form-table">
 						<tr>
-							<th scope="row">Show Globe / Language Icon</th>
+							<th scope="row">Show Language / Globe Icon</th>
 							<td>
 								<label class="din-switch">
 									<input type="checkbox" name="din_show_globe" value="1" <?php checked( 1, get_option( 'din_show_globe', 1 ) ); ?> />
@@ -283,13 +316,12 @@ class DIN_Admin {
 							</td>
 						</tr>
 						<tr>
-							<th scope="row">Show WooCommerce / FunnelKit Cart Icon</th>
+							<th scope="row">Show Cart Icon</th>
 							<td>
 								<label class="din-switch">
 									<input type="checkbox" name="din_show_cart" value="1" <?php checked( 1, get_option( 'din_show_cart', 1 ) ); ?> />
 									<span class="din-slider"></span>
 								</label>
-								<p class="description">Displays FunnelKit / WooCommerce cart icon with count badge. In mobile view, cart icon is placed to the left of the menu icon on the right.</p>
 							</td>
 						</tr>
 						<tr>
@@ -380,7 +412,9 @@ class DIN_Admin {
 					</table>
 				</div>
 
-				<?php submit_button( 'Save ITSE Features Settings' ); ?>
+				<p class="submit">
+					<input type="submit" name="din_save_settings" class="button button-primary button-hero" value="Save ITSE Features Settings" />
+				</p>
 			</form>
 		</div>
 		<?php
